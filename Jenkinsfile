@@ -32,6 +32,7 @@ pipeline {
                             --format ALL \
                             --prettyPrint''',
                             odcInstallation: 'Dependency-Check'
+                            dependencyCheckPublisher failedTotalCritical: 1, pattern: 'dependency-check-report.xml', unstableTotalCritical: 1
                     }
                 }
             }
