@@ -5,7 +5,7 @@ pipeline {
         nodejs 'nodejs24.1.0'
     }
     environment {
-  MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/SuperData"
+  MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
     }
 
 
