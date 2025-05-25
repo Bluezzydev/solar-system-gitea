@@ -4,8 +4,10 @@ pipeline {
     tools {
         nodejs 'nodejs24.1.0'
     }
-    environment {
+   environment {
   MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
+  MONGO_USERNAME = "superuser"
+  MONGO_PASSWORD = "superpassword"
 }
 
 
@@ -46,13 +48,13 @@ pipeline {
         }
         stage('unit testing') {
   steps {
-    withCredentials([usernamePassword(credentialsId: 'mongo-db', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+    
    
         echo "Using MongoDB credentials: $MONGO_USERNAME"        
       echo 'Running unit tests...'
       sh 'npm test'
           }
-    }
+    
   }
 }
         
