@@ -8,6 +8,8 @@ pipeline {
     environment {
         MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
         MONGO_DB_CREDENTIALS = credentials('mongo-db')
+        MONGO_DB_USER = credentials('mongo_db_user')
+        MONGO_DB_psw = credentials('mongo_db_psw')
     }
 
     options { 
@@ -84,4 +86,12 @@ pipeline {
             }
         }
     }
+    post {
+  always {
+                    publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report', reportFiles: 'index.html', reportName: 'code coverage HTML Report', reportTitles: ''])
+                    publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'dependency-check-report.html', reportName: 'dependency check jenkins HTML Report', reportTitles: ''])
+                        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'dependency-check-jenkins.html', reportName: 'dependency check HTML Report', reportTitles: ''])
+                        junit allowEmptyResults: true, stdioRetention: 'ALL', testResults: 'dependency-check-junit.xml'
+  }
+}
 }
