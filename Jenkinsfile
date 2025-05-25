@@ -59,8 +59,8 @@ pipeline {
         stage('unit testing') {
             steps {
                   sh 'echo $MONGO_DB_CREDENTIALS'
-                  sh 'echo username: MONGO_DB_CREDENTIALS_USR'
-                  sh 'echo password: MONGO_DB_CREDENTIALS_PSW'
+                  sh 'echo username: $MONGO_DB_CREDENTIALS_USR'
+                  sh 'echo password: $MONGO_DB_CREDENTIALS_PSW'
                   
                 
                     echo "Using MongoDB credentials: $MONGO_USERNAME"        
