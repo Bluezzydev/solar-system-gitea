@@ -4,6 +4,10 @@ pipeline {
     tools {
         nodejs 'nodejs24.1.0'
     }
+    environment {
+  MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/SuperData"
+    }
+
 
     stages {
         stage('Install Dependencies') {
@@ -18,45 +22,39 @@ pipeline {
                 stage('Audit') {
                     steps {
                         echo 'Running npm audit...'
-                        sh 'npm audit --audit-level=critical || true'
+                        sh '''
+                            npm audit --audit-level=critical
+                            echo $?
+                        '''
                     }
                 }
 
                 stage('OWASP') {
                     steps {
-                        dependencyCheck additionalArguments: '''
-                            --scan ./ 
-                            --format ALL 
-                            --disableNodeJS
-                        ''',
-                        odcInstallation: 'Dependency-Check'
-                        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
-                        publishHTML([reportDir: './', reportFiles: 'dependency-check-report.html', reportName: 'Security Report'])
+                        dependencyCheck additionalArguments: '''--scan './' \
+                            --out './' \
+                            --format ALL \
+                            --prettyPrint''',
+                            odcInstallation: 'Dependency-Check'
+                            dependencyCheckPublisher failedTotalCritical: 1, pattern: 'dependency-check-report.xml', unstableTotalCritical: 1
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'dependency-check-report.html', reportName: 'dependency check jenkins HTML Report', reportTitles: ''])
+                            junit allowEmptyResults: true, stdioRetention: 'ALL', testResults: 'dependency-check-junit.xml'
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'dependency-check-jenkins.html', reportName: 'dependency check HTML Report', reportTitles: ''])
                     }
                 }
             }
         }
-
-        stage('Unit Testing') {
-            steps {
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'mongo-db',
-                        usernameVariable: 'MONGO_USER',
-                        passwordVariable: 'MONGO_PASS'
-                    )
-                ]) {
-                    script {
-                        // Proper URI encoding using Groovy's URLEncoder
-                        def encodedPass = URLEncoder.encode(env.MONGO_PASS, "UTF-8")
-                        env.MONGO_URI = "mongodb+srv://${env.MONGO_USER}:${encodedPass}@supercluster.d83jj.mongodb.net/superData?retryWrites=true&w=majority&authMechanism=SCRAM-SHA-1"
-                    }
-                    sh '''
-                        echo "Testing connection to MongoDB..."
-                        npm test
-                    '''
-                }
-            }
-        }
+        stage('unit testing') {
+  steps {
+    withCredentials([usernamePassword(credentialsId: 'mongo-db', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+   
+        echo "Using MongoDB credentials: $MONGO_USERNAME"        
+      echo 'Running unit tests...'
+      sh 'npm test'
+          }
     }
+  }
 }
+        
+    }
+
