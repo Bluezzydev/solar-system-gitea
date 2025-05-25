@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
-        MONDO_DB_CREDENTIALS = credentials('mongo-db')
+        MONGO_DB_CREDENTIALS = credentials('mongo-db')
     }
 
     options { 
