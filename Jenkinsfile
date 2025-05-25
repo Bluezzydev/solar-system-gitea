@@ -4,6 +4,10 @@ pipeline {
     tools {
         nodejs 'nodejs24.1.0'
     }
+    environment {
+  MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
+}
+
 
     stages {
         stage('Install Dependencies') {
@@ -42,6 +46,7 @@ pipeline {
         }
         stage('unit testing') {
             steps {
+                withCredentials([usernamePassword(credentialsId: 'mongo-db-cred', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')])
                 echo 'Running unit tests...'
                 sh 'npm test'
             }
