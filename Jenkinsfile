@@ -4,11 +4,9 @@ pipeline {
     tools {
         nodejs 'nodejs24.1.0'
     }
-   environment {
+    environment {
   MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
-  MONGO_USERNAME = "superuser"
-  MONGO_PASSWORD = "superpassword"
-}
+    }
 
 
     stages {
@@ -48,14 +46,19 @@ pipeline {
         }
         stage('unit testing') {
   steps {
-    
-   
-        echo "Using MongoDB credentials: $MONGO_USERNAME"        
+    withCredentials([usernamePassword(credentialsId: 'mongo-db', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+      script {
+        def encodedPassword = URLEncoder.encode(env.MONGO_PASSWORD, "UTF-8")
+        def fullUri = "mongodb+srv://${env.MONGO_USERNAME}:${encodedPassword}@supercluster.d83jj.mongodb.net/superData?retryWrites=true&w=majority&authSource=admin"
+        env.MONGO_URI = fullUri
+      }
+      echo "Using MongoDB credentials for user: ${env.MONGO_USERNAME}"
       echo 'Running unit tests...'
       sh 'npm test'
-          }
-    
+    }
   }
+}
+
 }
         
     }
