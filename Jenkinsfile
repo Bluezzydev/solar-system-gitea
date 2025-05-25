@@ -44,12 +44,13 @@ pipeline {
                 }
             }
         }
-        stage('unit testing') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'mongo-db-cred', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')])
-                echo 'Running unit tests...'
-                sh 'npm test'
-            }
+                stage('unit testing') {
+                    steps {
+                        withCredentials([usernamePassword(credentialsId: 'mongo-db-cred', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+                         echo 'Running unit tests...'
+                         sh 'npm test'
         }
+    }
+}
     }
 }
