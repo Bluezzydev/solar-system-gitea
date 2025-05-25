@@ -7,6 +7,7 @@ pipeline {
 
     environment {
         MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
+        MONDO_DB_CREDENTIALS = credentials('mongo-db')
     }
 
     options { 
@@ -57,17 +58,21 @@ pipeline {
 
         stage('unit testing') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'mongo-db', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+                  sh 'echo $MONGO_DB_CREDENTIALS'
+                  sh 'echo username: MONGO_DB_CREDENTIALS_USR'
+                  sh 'echo password: MONGO_DB_CREDENTIALS_PSW'
+                  
+                
                     echo "Using MongoDB credentials: $MONGO_USERNAME"        
                     echo 'Running unit tests...'
                     sh 'npm test'
-                }
+                
             }
         }
 
         stage('Code Coverage and Catch Errors') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'mongo-db', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+                
                     catchError(buildResult: 'SUCCESS', message: 'there\'s error we will fix in next realse', stageResult: 'UNSTABLE') {
    
 
@@ -75,7 +80,7 @@ pipeline {
                     }
                     publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report', reportFiles: 'index.html', reportName: 'code coverage HTML Report', reportTitles: ''])
 
-                }
+                
             }
         }
     }
