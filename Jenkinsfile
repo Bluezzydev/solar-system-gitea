@@ -33,6 +33,7 @@ pipeline {
                             --prettyPrint''',
                             odcInstallation: 'Dependency-Check'
                             dependencyCheckPublisher failedTotalCritical: 1, pattern: 'dependency-check-report.xml', unstableTotalCritical: 1
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'dependency-check-jenkins.html', reportName: 'dependency check HTML Report', reportTitles: '', useWrapperFileDirectly: true])
                     }
                 }
             }
