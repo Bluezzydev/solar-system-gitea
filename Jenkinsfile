@@ -91,7 +91,7 @@ pipeline {
                 echo 'Running SonarQube analysis...'
                 sh 'echo $SONAR_SCANNER_HOME'
                 sh '''
-                    $SONAR_SCANNER_HOM \
+                    $SONAR_SCANNER_HOME \
                          -Dsonar.projectKey=solar-system \
                         -Dsonar.sources=. \
                         -Dsonar.host.url=http://localhost:9001 \
