@@ -10,6 +10,7 @@ pipeline {
         MONGO_DB_CREDENTIALS = credentials('mongo-db')
         MONGO_USERNAME = credentials('mongo_db_user')
         MONGO_PASSWORD = credentials('mongo_db_psw')
+        SONAR_SCANNER_HOME = tool name: 'sonar-qube-7.1.0.4';
     }
 
     options { 
@@ -85,6 +86,20 @@ pipeline {
                 
             }
         }
+        stage('scan code') {
+            steps {
+                echo 'Running SonarQube analysis...'
+                SH 'echo $SONAR_SCANNER_HOME'
+                sh '''
+                    $SONAR_SCANNER_HOM \
+                         -Dsonar.projectKey=solar-system \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=http://localhost:9001 \
+                        -Dsonar.login=sqp_0caa81b3924e56ee0d2358ab7fc310a76429d2a4
+                 '''   
+                }
+            }
+        }
     }
     post {
   always {
@@ -94,4 +109,4 @@ pipeline {
                         junit allowEmptyResults: true, stdioRetention: 'ALL', testResults: 'dependency-check-junit.xml'
   }
 }
-}
+
