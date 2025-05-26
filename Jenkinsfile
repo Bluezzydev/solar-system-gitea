@@ -10,7 +10,7 @@ pipeline {
         MONGO_DB_CREDENTIALS = credentials('mongo-db')
         MONGO_USERNAME = credentials('mongo_db_user')
         MONGO_PASSWORD = credentials('mongo_db_psw')
-        SONAR_SCANNER_HOME = tool 'sonar-qube-7.1.0.4';
+        SONAR_SCANNER_HOME = "${tool 'sonar-qube-7.1.0.4'}"
     }
 
     options { 
